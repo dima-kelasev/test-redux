@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { connect } from 'react-redux'   // импортировали функцию  connect  которая оборачивает на экспортируемый компонент,
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+class App extends Component {
+  addTrack() {
+    console.log('Add Track', this.trackInput.value);
+     this.props.onAddTrack(this.trackInput.value);
+     this.trackInput.value= '';
+  }
+  render() {
+    console.log(this.props.testStore)
+    return (
+      <div>
+        <input type="text"  ref={(input) => { this.trackInput = input }}/>    {/* отрисовали рамзметку */}
+        <button onClick={this.addTrack.bind(this)}>Add Track</button>
+        <ul>
+          {this.props.testStore.map((track, index) =>   
+            <li key={index}>{track}</li>
+          )}
+        </ul>
+      </div>
+    )
+  }
 }
 
-export default App;
+
+export default connect( // принимает на входе дву функции state и dispatch
+  state => ({
+    testStore: state   //передает взятый у корневого элемента props.state
+  }),
+  dispatch =>({
+    onAddTrack: (trackName) => {
+      dispatch({ type: 'ADD_TRACK', playload: trackName}) //добавляет в глобальный Store (initialState) новые
+    }
+  })
+)(App);
